@@ -9,6 +9,7 @@ if [ "$#" -lt 2 ]; then
     echo "You can add teammate uni-id (if code is in that student's repository) -t=[teammate_uniid]"
     echo "You can add team repository with -r=[repo_name]"
     echo ""
+    echo "You can add your tests to directory ~/autotest/tester as valid ROS packages"
     echo "You can find testing results in ~/autotest/host/test_results"
     echo "If that is empty then check the debug files in ~autotest/host"
     exit 0
