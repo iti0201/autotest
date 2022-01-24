@@ -1,0 +1,101 @@
+#!/bin/bash
+
+cd ~
+DIRECTORY="iti0201-2022"
+
+if [ "$#" -lt 2 ]; then
+    echo "USAGE: container_test [uni-id] [exercise_number]"
+    echo "You can add git branch name with -b=[branch]"
+    echo "You can add teammate uni-id (if code is in that student's repository) -t=[teammate_uniid]"
+    echo "You can add team repository with -r=[repo_name]"
+    exit 0
+fi
+
+git_user_name=$1
+exercise_number=$2
+
+team=
+repo=$DIRECTORY
+branch=master
+
+for i in "$@"
+do
+case $i in
+    -t=*|--team=*)
+    team="${i#*=}"
+    shift # past argument=value
+    ;;
+    -r=*|--repo=*)
+    repo="${i#*=}"
+    shift # past argument=value
+    ;;
+    -b=*|--branch=*)
+    branch="${i#*=}"
+    shift # past argument=value
+    ;;
+    --default)
+    DEFAULT=YES
+    shift # past argument with no value
+    ;;
+    *)
+          # unknown option
+    ;;
+esac
+done
+
+if [[ ! -z "$team" ]]; then
+    git_address="https://$git_user_name@gitlab.cs.ttu.ee/$team/$repo.git"
+    if [[ "$key" -eq 1 ]]; then
+        git_address="git@gitlab.cs.ttu.ee:$team/$repo.git"
+    fi
+else
+    git_address="https://$git_user_name@gitlab.cs.ttu.ee/$git_user_name/$repo.git"
+    if [[ "$key" -eq 1 ]]; then
+        git_address="git@gitlab.cs.ttu.ee:$git_user_name/$repo.git"
+    fi
+fi
+
+
+echo $git_address
+
+if [ -d "$DIRECTORY" ]; then
+    echo "Repository already exists. Updating.."
+    cd $DIRECTORY
+    git pull origin $branch
+    git checkout $branch
+else
+    echo "Repository doesn't exist yet. Creating one now..."
+    git clone -b $branch $git_address $DIRECTORY
+    cd $DIRECTORY
+fi
+git submodule update --init --remote --merge
+
+cd ~
+if [ -d "autotest" ]; then
+    echo "autotest already exists. Updating.."
+    cd autotest
+    git reset --hard
+    git pull origin $branch
+    git checkout $branch
+else
+    pwd
+    echo "autotest doesn't exist yet. Creating one now..."
+    git clone -b master https://github.com/iti0201/autotest.git autotest
+    cd autotest
+fi
+pwd
+git submodule update --init --remote --merge
+cd ~
+
+docker rm -vf $(docker ps -aq) && 1
+
+replace=".\/$DIRECTORY\/$exercise_number"
+search=".\/student"
+echo $replace
+echo $search
+echo "s/$search/$replace/"
+
+sed -i "s/$search/$replace/" autotest/docker-compose.yml
+cat autotest/docker-compose.yml
+
+docker-compose -f autotest/docker-compose.yml up
