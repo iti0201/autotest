@@ -89,7 +89,7 @@ cd ~
 
 docker rm -vf $(docker ps -aq) && 1
 
-replace=".\/$DIRECTORY\/$exercise_number"
+replace="\/home\/iti0201\/$DIRECTORY\/$exercise_number"
 search=".\/student"
 echo $replace
 echo $search
@@ -98,4 +98,4 @@ echo "s/$search/$replace/"
 sed -i "s/$search/$replace/" autotest/docker-compose.yml
 cat autotest/docker-compose.yml
 
-docker-compose -f autotest/docker-compose.yml up
+docker-compose -f autotest/docker-compose.yml up 
