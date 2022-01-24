@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  ros_tester:
+    container_name: ros_tester
+    image: automatedtestingservice/ros-tester
+    environment:
+      - USE_ROBOT_PY_FILE=1
+      - REPOS_TO_CLONE="[\"https://github.com/iti0201/simulation.git\"]"
+    volumes:
+      - './host:/host'
+      - './student:/student'
+      - './tester:/tester'
