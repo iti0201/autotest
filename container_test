@@ -4,7 +4,7 @@ cd ~
 DIRECTORY="iti0201-2022"
 
 if [ "$#" -lt 2 ]; then
-    echo "USAGE: container_test [uni-id] [exercise_number]"
+    echo "USAGE: autotest [uni-id] [exercise_number]"
     echo "You can add git branch name with -b=[branch]"
     echo "You can add teammate uni-id (if code is in that student's repository) -t=[teammate_uniid]"
     echo "You can add team repository with -r=[repo_name]"
